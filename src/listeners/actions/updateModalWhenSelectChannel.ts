@@ -4,6 +4,7 @@ import {
   SlackActionMiddlewareArgs,
 } from '@slack/bolt';
 import { messageInputBlock } from '../../blocks/messageInputBlock.js';
+import { checkValidChannel } from '../../helpers.js';
 
 export async function updateModalWhenSelectChannel({
   ack,
@@ -13,7 +14,7 @@ export async function updateModalWhenSelectChannel({
 }: AllMiddlewareArgs & SlackActionMiddlewareArgs<BlockChannelsSelectAction>) {
   await ack();
   if (!body.view) return;
-  const allowedChannelIds = process.env.ALLOWED_SLACK_CHANNEL_IDS.split(',');
+  const channelId = action.selected_channel;
 
   await client.views.update({
     view_id: body.view.id,
@@ -26,14 +27,18 @@ export async function updateModalWhenSelectChannel({
         text: 'Send anonymously!',
         emoji: true,
       },
-      submit: {
-        type: 'plain_text',
-        text: 'Submit',
-        emoji: true,
-      },
+      ...(checkValidChannel(channelId)
+        ? {
+            submit: {
+              type: 'plain_text',
+              text: 'Submit',
+              emoji: true,
+            },
+          }
+        : {}),
       close: {
         type: 'plain_text',
-        text: 'Cancel',
+        text: 'Close',
         emoji: true,
       },
       blocks: [
@@ -49,15 +54,7 @@ export async function updateModalWhenSelectChannel({
             action_id: 'channels-select-action',
           },
         },
-        allowedChannelIds.includes(action.selected_channel)
-          ? messageInputBlock()
-          : {
-              type: 'section',
-              text: {
-                type: 'plain_text',
-                text: 'This channel is restricted by admin, please choose another one!',
-              },
-            },
+        messageInputBlock({ channelId }),
       ],
     },
   });

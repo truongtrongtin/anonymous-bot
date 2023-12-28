@@ -1,4 +1,5 @@
 import { View } from '@slack/bolt';
+import { checkValidChannel } from '../helpers.js';
 import { messageInputBlock } from './messageInputBlock.js';
 
 export function replyMessageView({
@@ -15,18 +16,22 @@ export function replyMessageView({
       text: 'Reply anonymously!',
       emoji: true,
     },
-    submit: {
-      type: 'plain_text',
-      text: 'Submit',
-      emoji: true,
-    },
+    ...(checkValidChannel(channelId)
+      ? {
+          submit: {
+            type: 'plain_text',
+            text: 'Submit',
+            emoji: true,
+          },
+        }
+      : {}),
     type: 'modal',
     close: {
       type: 'plain_text',
-      text: 'Cancel',
+      text: 'Close',
       emoji: true,
     },
     private_metadata: JSON.stringify({ messageTs, channelId }),
-    blocks: [messageInputBlock()],
+    blocks: [messageInputBlock({ channelId })],
   };
 }

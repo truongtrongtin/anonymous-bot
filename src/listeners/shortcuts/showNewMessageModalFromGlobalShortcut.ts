@@ -18,15 +18,10 @@ export async function showNewMessageModalFromGlobalShortcut({
         text: 'Send anonymously!',
         emoji: true,
       },
-      submit: {
-        type: 'plain_text',
-        text: 'Submit',
-        emoji: true,
-      },
       type: 'modal',
       close: {
         type: 'plain_text',
-        text: 'Cancel',
+        text: 'Close',
         emoji: true,
       },
       blocks: [
