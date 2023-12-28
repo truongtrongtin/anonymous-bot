@@ -3,6 +3,7 @@ import {
   BlockChannelsSelectAction,
   SlackActionMiddlewareArgs,
 } from '@slack/bolt';
+import { messageInputBlock } from '../../blocks/messageInputBlock.js';
 
 export async function updateModalWhenSelectChannel({
   ack,
@@ -49,18 +50,7 @@ export async function updateModalWhenSelectChannel({
           },
         },
         allowedChannelIds.includes(action.selected_channel)
-          ? {
-              type: 'input',
-              block_id: 'message-input-block',
-              element: {
-                type: 'rich_text_input',
-                action_id: 'message-input-action',
-              },
-              label: {
-                type: 'plain_text',
-                text: 'Message',
-              },
-            }
+          ? messageInputBlock()
           : {
               type: 'section',
               text: {

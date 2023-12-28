@@ -1,4 +1,5 @@
 import { View } from '@slack/bolt';
+import { messageInputBlock } from './messageInputBlock.js';
 
 export function replyMessageView({
   channelId,
@@ -26,19 +27,6 @@ export function replyMessageView({
       emoji: true,
     },
     private_metadata: JSON.stringify({ messageTs, channelId }),
-    blocks: [
-      {
-        type: 'input',
-        block_id: 'message-input-block',
-        element: {
-          type: 'rich_text_input',
-          action_id: 'message-input-action',
-        },
-        label: {
-          type: 'plain_text',
-          text: 'Message',
-        },
-      },
-    ],
+    blocks: [messageInputBlock()],
   };
 }
