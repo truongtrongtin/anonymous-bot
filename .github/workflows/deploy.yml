@@ -1,0 +1,43 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/96573011708/locations/global/workloadIdentityPools/gh-pool/providers/gh-provider
+          service_account: github-actions-service-account@my-project-1540367072726.iam.gserviceaccount.com
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - id: deploy
+        name: Use gcloud CLI
+        run: >
+          gcloud functions deploy anonymous-bot
+          --gen2
+          --trigger-http
+          --entry-point=expressApp
+          --runtime=nodejs20
+          --memory=128MiB
+          --max-instances=80
+          --region=us-west1
+          --source=.
+          --allow-unauthenticated
+          --set-env-vars SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }}
+          --set-env-vars SLACK_SIGNING_SECRET=${{ secrets.SLACK_SIGNING_SECRET }}
+          --set-env-vars ALLOWED_SLACK_CHANNEL_IDS=${{ secrets.ALLOWED_SLACK_CHANNEL_IDS }}
