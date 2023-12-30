@@ -1,0 +1,34 @@
+display_information:
+  name: AnonymousBot
+features:
+  bot_user:
+    display_name: AnonymousBot
+    always_online: false
+  shortcuts:
+    - name: Send anonymously!
+      type: global
+      callback_id: global_new_message
+      description: Anonymous message
+    - name: Reply anonymously!
+      type: message
+      callback_id: message_reply
+      description: Reply message anonymously
+oauth_config:
+  redirect_urls:
+    - https://YOUR_APP_URL/slack/oauth_redirect
+  scopes:
+    bot:
+      - chat:write
+      - chat:write.public
+      - commands
+settings:
+  event_subscriptions:
+    request_url: https://YOUR_APP_URL/slack/events
+    bot_events:
+      - app_uninstalled
+  interactivity:
+    is_enabled: true
+    request_url: https://YOUR_APP_URL/slack/events
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
