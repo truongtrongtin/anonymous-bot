@@ -1,6 +1,5 @@
-import { View } from '@slack/bolt';
-import { checkValidChannel } from '../helpers.js';
-import { messageInputBlock } from './messageInputBlock.js';
+import { messageInputBlock } from "@/blocks/messageInputBlock";
+import { ModalView } from "slack-cloudflare-workers";
 
 export function replyMessageView({
   channelId,
@@ -8,30 +7,26 @@ export function replyMessageView({
 }: {
   channelId: string;
   messageTs: string;
-}): View {
+}): ModalView {
   return {
-    callback_id: 'reply-message-submit',
+    callback_id: "reply-message-submit",
     title: {
-      type: 'plain_text',
-      text: 'Reply anonymously!',
+      type: "plain_text",
+      text: "Reply anonymously!",
       emoji: true,
     },
-    ...(checkValidChannel(channelId)
-      ? {
-          submit: {
-            type: 'plain_text',
-            text: 'Submit',
-            emoji: true,
-          },
-        }
-      : {}),
-    type: 'modal',
+    submit: {
+      type: "plain_text",
+      text: "Submit",
+      emoji: true,
+    },
+    type: "modal",
     close: {
-      type: 'plain_text',
-      text: 'Close',
+      type: "plain_text",
+      text: "Close",
       emoji: true,
     },
     private_metadata: JSON.stringify({ messageTs, channelId }),
-    blocks: [messageInputBlock({ channelId })],
+    blocks: [messageInputBlock()],
   };
 }

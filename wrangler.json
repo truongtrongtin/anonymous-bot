@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "anonymous-bot",
+  "main": "src/main.ts",
+  "compatibility_date": "2025-04-11",
+  "observability": {
+    "enabled": true
+  },
+  "kv_namespaces": [
+    {
+      "binding": "SLACK_INSTALLATIONS",
+      "id": "cd66cdf7ddba48edbd72ab2e240c7f4a"
+    },
+    {
+      "binding": "SLACK_OAUTH_STATES",
+      "id": "f28d53bad7ed468988101b45803dba2b"
+    }
+  ]
+}

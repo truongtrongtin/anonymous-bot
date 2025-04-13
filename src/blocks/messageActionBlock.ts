@@ -1,4 +1,4 @@
-import { ActionsBlock } from '@slack/bolt';
+import { ActionsBlock } from "slack-cloudflare-workers";
 
 export function messageActionBlock({
   upUserIds,
@@ -8,41 +8,41 @@ export function messageActionBlock({
   downUserIds: string[];
 }): ActionsBlock {
   return {
-    type: 'actions',
+    type: "actions",
     elements: [
       {
-        type: 'button',
-        action_id: 'reply-action',
+        type: "button",
+        action_id: "reply-action",
         text: {
-          type: 'plain_text',
-          text: 'Reply',
+          type: "plain_text",
+          text: "Reply",
         },
       },
       {
-        type: 'button',
-        action_id: 'thumbs-up-action',
+        type: "button",
+        action_id: "thumbs-up-action",
         text: {
-          type: 'plain_text',
+          type: "plain_text",
           text:
             upUserIds.length > 0
               ? `${upUserIds.length} :thumbsup:`
-              : ':thumbsup:',
+              : ":thumbsup:",
           emoji: true,
         },
-        ...(upUserIds.length > 0 ? { value: upUserIds.join(',') } : {}),
+        ...(upUserIds.length > 0 ? { value: upUserIds.join(",") } : {}),
       },
       {
-        type: 'button',
-        action_id: 'thumbs-down-action',
+        type: "button",
+        action_id: "thumbs-down-action",
         text: {
-          type: 'plain_text',
+          type: "plain_text",
           text:
             downUserIds.length > 0
               ? `${downUserIds.length} :thumbsdown:`
-              : ':thumbsdown:',
+              : ":thumbsdown:",
           emoji: true,
         },
-        ...(downUserIds.length > 0 ? { value: downUserIds.join(',') } : {}),
+        ...(downUserIds.length > 0 ? { value: downUserIds.join(",") } : {}),
       },
     ],
   };

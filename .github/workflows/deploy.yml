@@ -1,4 +1,5 @@
 name: Deploy
+
 on:
   push:
     branches:
@@ -6,43 +7,25 @@ on:
 
 jobs:
   deploy:
-    name: Deploy
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
+    name: Deploy
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
-
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
+      - uses: actions/checkout@v4
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
         with:
-          workload_identity_provider: projects/96573011708/locations/global/workloadIdentityPools/gh-pool/providers/gh-provider
-          service_account: github-actions-service-account@my-project-1540367072726.iam.gserviceaccount.com
-
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-
-      - id: deploy
-        name: Use gcloud CLI
-        run: >
-          gcloud functions deploy anonymous-bot
-          --gen2
-          --trigger-http
-          --entry-point=expressApp
-          --runtime=nodejs20
-          --memory=128MiB
-          --max-instances=80
-          --region=us-west1
-          --source=.
-          --allow-unauthenticated
-          --set-env-vars SLACK_SIGNING_SECRET=${{ secrets.SLACK_SIGNING_SECRET }}
-          --set-env-vars SLACK_CLIENT_ID=${{ secrets.SLACK_CLIENT_ID }}
-          --set-env-vars SLACK_CLIENT_SECRET=${{ secrets.SLACK_CLIENT_SECRET }}
-          --set-env-vars ALLOWED_SLACK_CHANNEL_IDS=${{ secrets.ALLOWED_SLACK_CHANNEL_IDS }}
-          --set-env-vars PROJECT_ID=${{ secrets.PROJECT_ID }}
-          --set-env-vars SERVICE_ACCOUNT_EMAIL=${{ secrets.SERVICE_ACCOUNT_EMAIL }}
-          --set-env-vars SERVICE_ACCOUNT_PRIVATE_KEY_BASE64=${{ secrets.SERVICE_ACCOUNT_PRIVATE_KEY_BASE64 }}
-          --set-env-vars DATABASE_ID=${{ secrets.DATABASE_ID }}
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          wranglerVersion: "4.12.0"
+          secrets: |
+            SLACK_SIGNING_SECRET
+            SLACK_CLIENT_ID
+            SLACK_CLIENT_SECRET
+            SLACK_BOT_SCOPES
+            SLACK_REDIRECT_URI
+        env:
+          SLACK_SIGNING_SECRET: ${{ secrets.SLACK_SIGNING_SECRET }}
+          SLACK_CLIENT_ID: ${{ secrets.SLACK_CLIENT_ID }}
+          SLACK_CLIENT_SECRET: ${{ secrets.SLACK_CLIENT_SECRET }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          SLACK_BOT_SCOPES: ${{ secrets.SLACK_BOT_SCOPES }}
+          SLACK_REDIRECT_URI: ${{ secrets.SLACK_REDIRECT_URI }}
